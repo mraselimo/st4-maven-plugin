@@ -1,5 +1,6 @@
 package za.ac.sun.cs.st4.backend;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -21,7 +22,11 @@ public class Template {
         return properties;
     }
     public static void generateSource(String fileName) throws IOException {
-        STGroup group  = new STGroupFile(""); //TODO
+        String tFile = "templates/metatemplate.stg";
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File file = new File(classLoader.getResource(tFile).getFile());
+
+        STGroup group  = new STGroupFile(file.getPath()); //TODO
         ST st = group.getInstanceOf("meta");
 
         FileWriter fileWriter = new FileWriter(fileName);
