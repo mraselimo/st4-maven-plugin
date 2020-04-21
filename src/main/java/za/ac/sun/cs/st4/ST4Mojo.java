@@ -5,12 +5,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
 import org.stringtemplate.v4.*;
 
 import java.io.File;
+import java.util.Map;
 
 @Mojo(name = "render", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class ST4Mojo extends AbstractMojo {
@@ -24,6 +25,9 @@ public class ST4Mojo extends AbstractMojo {
     @Parameter(property = "outputDirectory",defaultValue = "${project.build.directory}/generated-sources/templates")
     private File outputDirectory;
 
+    @Parameter(property = "properties")
+    private Map<String, String> properties;
+
     @Parameter(defaultValue = "${project}")
     MavenProject project;
 
@@ -31,6 +35,5 @@ public class ST4Mojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("***  st4-maven-plugin (su edition) ***");
         getLog().info("This is a minimal plugin for stringtemplate");
-
     }
 }
