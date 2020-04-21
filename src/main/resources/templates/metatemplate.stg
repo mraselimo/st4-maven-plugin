@@ -1,5 +1,6 @@
 meta(fileName, outputDirectory, src, instance, members) ::= <<
 import java.io.FileWriter;
+import java.io.IOException;
 import org.stringtemplate.v4.AutoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
