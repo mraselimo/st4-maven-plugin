@@ -59,12 +59,13 @@ public class ST4Mojo extends AbstractMojo {
         STGroup group = new STGroupFile(templateFile);
         ST st = group.getInstanceOf(templateName);
 
-        FileWriter writer = new FileWriter(generatedFile);
+        FileWriter writer = new FileWriter(generatedFile+".java");
         ErrorBuffer listener = new ErrorBuffer();
 
         for(String key : this.getProperties().keySet()) {
             st.add(key, this.getProperties().get(key));
         }
+
         st.write(new AutoIndentWriter(writer), listener);
         writer.flush();
         writer.close();
@@ -84,8 +85,8 @@ public class ST4Mojo extends AbstractMojo {
         if(!outputDirectory.exists())
             outputDirectory.mkdirs();
 
-        String templateFile = sourceDirectory.getAbsolutePath() + template;
-        String outputFile = outputDirectory.getAbsolutePath() + generatedClassName;
+        String templateFile = sourceDirectory.getAbsolutePath() +"/"+ template;
+        String outputFile = outputDirectory.getAbsolutePath() +"/"+ generatedClassName;
         try {
             this.generateSources(templateFile, target, outputFile);
         } catch (IOException e) {
