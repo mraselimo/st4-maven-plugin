@@ -48,9 +48,17 @@ public class ST4Mojo extends AbstractMojo {
     * */
     @Parameter(property = "generatedClassName", defaultValue = "")
     private String generatedClassName;
-
+    /*
+    * for simple mapping of string key to string value
+    **/
     @Parameter(property = "properties")
     private Map<String, String> properties;
+
+    /*
+    * for string to Lists
+    **/
+    @Parameter(property = "variableList")
+    private Map<String, VariableList> variableList;
 
     @Parameter(defaultValue = "${project}")
     MavenProject project;
@@ -65,7 +73,12 @@ public class ST4Mojo extends AbstractMojo {
         for(String key : this.getProperties().keySet()) {
             st.add(key, this.getProperties().get(key));
         }
-
+        /* dealing with lists in st4 syntax */
+        if (variableList != null) {
+            for (String key : variableList.keySet()) {
+                st.add(key, variableList.get(key).getVariables());
+            }
+        }
         st.write(new AutoIndentWriter(writer), listener);
         writer.flush();
         writer.close();
