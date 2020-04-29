@@ -18,75 +18,20 @@ import org.stringtemplate.v4.misc.ErrorBuffer;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Mojo(name = "render", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class ST4Mojo extends AbstractMojo {
-    /*
-     * where to look for templates */
-    @Parameter(property = "sourceDirectory", defaultValue = "${basedir}/src/main/resources/templates")
-    private File sourceDirectory;
-    /*
-     * where to keep generated files
-     */
+
     @Parameter(property = "outputDirectory",defaultValue = "${project.build.directory}/generated-sources/templates")
     private File outputDirectory;
 
-    /*
-    * template file
-    **/
-    @Parameter(property = "template")
-    private String template;
-    /*
-    * name of the template to process
-    **/
-    @Parameter(property = "target", defaultValue = "")
-    private String target;
-
-    /*
-    *  name of generated source file
-    * */
-    @Parameter(property = "generatedClassName", defaultValue = "")
-    private String generatedClassName;
-    /*
-    * for simple mapping of string key to string value
-    **/
-    @Parameter(property = "properties")
-    private Map<String, String> properties;
-
-    /*
-    * for string to Lists
-    **/
-    @Parameter(property = "variableList")
-    private Map<String, VariableList> variableList;
+    @Parameter
+    List<Template> templates;
 
     @Parameter(defaultValue = "${project}")
     MavenProject project;
-
-    private void generateSources(String templateFile, String templateName, String generatedFile) throws IOException {
-        STGroup group = new STGroupFile(templateFile);
-        ST st = group.getInstanceOf(templateName);
-
-        FileWriter writer = new FileWriter(generatedFile+".java");
-        ErrorBuffer listener = new ErrorBuffer();
-
-        for(String key : this.getProperties().keySet()) {
-            st.add(key, this.getProperties().get(key));
-        }
-        /* dealing with lists in st4 syntax */
-        if (variableList != null) {
-            for (String key : variableList.keySet()) {
-                st.add(key, variableList.get(key).getVariables());
-            }
-        }
-        st.write(new AutoIndentWriter(writer), listener);
-        writer.flush();
-        writer.close();
-    }
-
-    private Map<String, String> getProperties() {
-        return properties;
-    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -98,12 +43,18 @@ public class ST4Mojo extends AbstractMojo {
         if(!outputDirectory.exists())
             outputDirectory.mkdirs();
 
-        String templateFile = sourceDirectory.getAbsolutePath() +"/"+ template;
-        String outputFile = outputDirectory.getAbsolutePath() +"/"+ generatedClassName;
-        try {
-            this.generateSources(templateFile, target, outputFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Template template : templates) {
+            File templateSource = template.getSourceDirectory();
+            String templateFile = template.getTemplateFile();
+            String target = template.getTarget();
+            String generatedClass = template.getGeneratedClassName();
+            String tempFile = templateSource.getAbsolutePath()+"/"+templateFile;
+            String outputFile = outputDirectory.getAbsolutePath()+"/"+generatedClass;
+            try {
+                template.render(tempFile, target, outputFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         /* tell maven where to look for generated sources */
         if(project != null) {
