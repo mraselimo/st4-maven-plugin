@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>za.ac.sun.cs</groupId>
+    <artifactId>st4-consumer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>za.ac.sun.cs</groupId>
+                <artifactId>ST4-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+
+                <configuration>
+                    <outputDirectory>${project.build.directory}/generated-sources/templates/</outputDirectory>
+                    <templates>
+                        <template>
+                            <sourceDirectory>${basedir}/src/main/resources/templates/</sourceDirectory>
+                            <templateFile>driver.stg</templateFile>
+                            <target>meta</target>
+                            <generatedClassName>Driver</generatedClassName>
+                            <properties>
+                                <fileName>email.txt</fileName>
+                                <src>templates/email.stg</src>
+                                <instance>body</instance>
+                            </properties>
+                            <variableList>
+                                <members>
+                                    <variables>
+                                        <variable>red</variable>
+                                        <variable>blue</variable>
+                                    </variables>
+                                </members>
+                            </variableList>
+                        </template>
+                    </templates>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>render</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

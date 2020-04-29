@@ -1,0 +1,25 @@
+meta(fileName, src, instance, members) ::= <<
+import java.io.FileWriter;
+import java.io.IOException;
+import org.stringtemplate.v4.AutoIndentWriter;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.misc.ErrorBuffer;
+
+public class Driver {
+    public static void main(String[] args) throws IOException {
+         String group = new STGroupFile("<src>");
+         ST st = group.getInstance("<instance>");
+         FileWriter writer = new FileWriter("<fileName>");
+         ErrorBuffer listener = new ErrorBuffer();
+
+         <members:{ each | st.add(<each>);
+          }>
+
+         st.write(new AutoIndentWriter(fileWriter), listener);
+         writer.flush();
+         writer.close();
+    }
+}
+>>
