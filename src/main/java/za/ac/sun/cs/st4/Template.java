@@ -11,6 +11,8 @@ import org.stringtemplate.v4.misc.ErrorBuffer;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Template {
@@ -27,7 +29,7 @@ public class Template {
     /*
      * template file
      **/
-    @Parameter(property = "template")
+    @Parameter(property = "templateFile")
     private String templateFile;
     /*
      * name of the template to process
@@ -43,7 +45,6 @@ public class Template {
     /*
      * for simple mapping of string key to string value
      **/
-    @Parameter(property = "properties")
     private Map<String, String> properties;
 
     /*
@@ -52,26 +53,54 @@ public class Template {
     @Parameter(property = "variableList")
     private Map<String, VariableList> variableList;
 
-    public void render(String templateFile, String templateName, String generatedFile) throws IOException {
-        STGroup group = new STGroupFile(templateFile);
-        ST st = group.getInstanceOf(templateName);
+    public void render(String templateFile, String templateName, String generatedFile, List<String> props) throws IOException {
+        if (anyChanges(templateFile, generatedFile)) {
+            STGroup group = new STGroupFile(templateFile);
+            ST st = group.getInstanceOf(templateName);
 
-        FileWriter writer = new FileWriter(generatedFile+".java");
-        ErrorBuffer listener = new ErrorBuffer();
+            FileWriter writer = new FileWriter(generatedFile+".java");
+            ErrorBuffer listener = new ErrorBuffer();
 
-        for(String key : properties.keySet()) {
-            st.add(key, properties.get(key));
-        }
-        /* dealing with lists in st4 syntax */
-        if (variableList != null) {
-            for (String key : variableList.keySet()) {
-                st.add(key, variableList.get(key).getVariables());
+            putMapElements(props);
+
+            for(String key : properties.keySet()) {
+                st.add(key, properties.get(key));
             }
+            /* dealing with lists in st4 syntax */
+            if (variableList != null) {
+                for (String key : variableList.keySet()) {
+                    st.add(key, variableList.get(key).getVariables());
+                }
+            }
+            st.write(new AutoIndentWriter(writer), listener);
+            writer.flush();
+            writer.close();
+        } else {
+            System.out.println("No changes detected! Skipping!!");
         }
-        st.write(new AutoIndentWriter(writer), listener);
-        writer.flush();
-        writer.close();
     }
+    
+    private void putMapElements(List<String> props){
+        properties = new HashMap<String, String>();
+        for (String prop : props) {
+            String[] tokens = prop.split("=");
+            properties.put(tokens[0], tokens[1]);
+        }
+    }
+
+    private boolean anyChanges(String templateFile, String outputFile) {
+        File temp = new File(templateFile);
+        File out = new File(outputFile+".java");
+
+        if (!out.exists()) {
+            return true;
+        }
+        else if( out.lastModified() <= temp.lastModified()) {
+            return true;
+        }
+        return false;
+    }
+
     public String getTemplateFile() {
         return templateFile;
     }
@@ -79,10 +108,6 @@ public class Template {
     public File getSourceDirectory() {
         return sourceDirectory;
     }
-
-//    public File getOutputDirectory() {
-//        return outputDirectory;
-//    }
 
     public String getTarget() {
         return target;
