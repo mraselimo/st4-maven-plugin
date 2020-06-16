@@ -32,6 +32,9 @@ public class ST4Mojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}")
     MavenProject project;
+    
+    @Parameter(property = "props", defaultValue="")
+    private List<String> props;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -39,6 +42,8 @@ public class ST4Mojo extends AbstractMojo {
         getLog().info("       st4-maven-plugin (su edition)       ");
         getLog().info("This is a minimal plugin for stringtemplate");
         getLog().info("*******************************************");
+
+        getLog().info(props + "hosj");
 
         if(!outputDirectory.exists())
             outputDirectory.mkdirs();
@@ -51,7 +56,7 @@ public class ST4Mojo extends AbstractMojo {
             String tempFile = templateSource.getAbsolutePath()+"/"+templateFile;
             String outputFile = outputDirectory.getAbsolutePath()+"/"+generatedClass;
             try {
-                template.render(tempFile, target, outputFile);
+                template.render(tempFile, target, outputFile, props);
             } catch (IOException e) {
                 e.printStackTrace();
             }
