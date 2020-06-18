@@ -43,8 +43,6 @@ public class ST4Mojo extends AbstractMojo {
         getLog().info("This is a minimal plugin for stringtemplate");
         getLog().info("*******************************************");
 
-        getLog().info(props + "hosj");
-
         if(!outputDirectory.exists())
             outputDirectory.mkdirs();
 
