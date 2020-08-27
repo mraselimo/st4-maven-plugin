@@ -40,8 +40,8 @@ public class Template {
     /*
      *  name of generated source file
      * */
-    @Parameter(property = "generatedClassName", defaultValue = "")
-    private String generatedClassName;
+    @Parameter(property = "generatedFileName", defaultValue = "")
+    private String generatedFileName;
     /*
      * for simple mapping of string key to string value
      **/
@@ -58,7 +58,7 @@ public class Template {
             STGroup group = new STGroupFile(templateFile);
             ST st = group.getInstanceOf(templateName);
 
-            FileWriter writer = new FileWriter(generatedFile+".java");
+            FileWriter writer = new FileWriter(generatedFile);
             ErrorBuffer listener = new ErrorBuffer();
 
             putMapElements(props);
@@ -112,8 +112,8 @@ public class Template {
     public String getTarget() {
         return target;
     }
-    public String getGeneratedClassName() {
-        return  generatedClassName;
+    public String getGeneratedFileName() {
+        return  generatedFileName;
     }
     private Map<String, String> getProperties() {
         return properties;

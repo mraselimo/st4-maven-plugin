@@ -50,9 +50,9 @@ public class ST4Mojo extends AbstractMojo {
             File templateSource = template.getSourceDirectory();
             String templateFile = template.getTemplateFile();
             String target = template.getTarget();
-            String generatedClass = template.getGeneratedClassName();
+            String generatedFile = template.getGeneratedFileName();
             String tempFile = templateSource.getAbsolutePath()+"/"+templateFile;
-            String outputFile = outputDirectory.getAbsolutePath()+"/"+generatedClass;
+            String outputFile = outputDirectory.getAbsolutePath()+"/"+generatedFile;
             try {
                 template.render(tempFile, target, outputFile, props);
             } catch (IOException e) {
