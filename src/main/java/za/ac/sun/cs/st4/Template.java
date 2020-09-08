@@ -90,7 +90,7 @@ public class Template {
 
     private boolean anyChanges(String templateFile, String outputFile) {
         File temp = new File(templateFile);
-        File out = new File(outputFile+".java");
+        File out = new File(outputFile);
 
         if (!out.exists()) {
             return true;
